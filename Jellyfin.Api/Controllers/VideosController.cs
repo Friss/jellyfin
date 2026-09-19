@@ -313,6 +313,7 @@ public class VideosController : BaseJellyfinApiController
     /// <returns>A <see cref="FileResult"/> containing the audio file.</returns>
     [HttpGet("{itemId}/stream")]
     [HttpHead("{itemId}/stream", Name = "HeadVideoStream")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesVideoFile]
     public async Task<ActionResult> GetVideoStream(
@@ -368,6 +369,13 @@ public class VideosController : BaseJellyfinApiController
         [FromQuery] Dictionary<string, string> streamOptions,
         [FromQuery] bool enableAudioVbrEncoding = true)
     {
+        var userId = User.GetUserId();
+        var item = _libraryManager.GetItemById<BaseItem>(itemId, userId);
+        if (item is null)
+        {
+            return NotFound();
+        }
+
         var isHeadRequest = Request.Method == System.Net.WebRequestMethods.Http.Head;
         // CTS lifecycle is managed internally.
         var cancellationTokenSource = new CancellationTokenSource();
@@ -551,6 +559,7 @@ public class VideosController : BaseJellyfinApiController
     /// <returns>A <see cref="FileResult"/> containing the audio file.</returns>
     [HttpGet("{itemId}/stream.{container}")]
     [HttpHead("{itemId}/stream.{container}", Name = "HeadVideoStreamByContainer")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesVideoFile]
     public Task<ActionResult> GetVideoStreamByContainer(
