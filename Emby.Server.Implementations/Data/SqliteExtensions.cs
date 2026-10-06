@@ -263,8 +263,8 @@ namespace Emby.Server.Implementations.Data
 
         public static SqliteCommand PrepareStatement(this SqliteConnection sqliteConnection, string sql)
         {
-            var command = sqliteConnection.CreateCommand();
-            command.CommandText = sql;
+            var command = new SqliteCommand(sql, sqliteConnection);
+            command.Prepare();
             return command;
         }
     }
