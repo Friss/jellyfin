@@ -17,11 +17,14 @@ jobs:
         fetch-depth: 0
     - name: Search History
       id: ancestor
+      env:
+        BASE_REPO: ${{ github.event.pull_request.base.repo.full_name }}
+        BASE_REF: ${{ github.base_ref }}
       run: |
-        git remote add upstream https://github.com/${{ github.event.pull_request.base.repo.full_name }}
+        git remote add upstream "https://github.com/${BASE_REPO}"
         git fetch --prune --progress --no-recurse-submodules upstream +refs/heads/*:refs/remotes/upstream/* +refs/tags/*:refs/tags/*
 
-        ANCESTOR_REF=$(git merge-base upstream/${{ github.base_ref }} HEAD)
+        ANCESTOR_REF=$(git merge-base "upstream/${BASE_REF}" HEAD)
 
         echo "ref: ${ANCESTOR_REF}"
 
