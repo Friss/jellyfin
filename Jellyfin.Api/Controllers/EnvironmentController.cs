@@ -78,18 +78,25 @@ public class EnvironmentController : BaseJellyfinApiController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult ValidatePath([FromBody, Required] ValidatePathDto validatePathDto)
     {
+        if (string.IsNullOrEmpty(validatePathDto.Path))
+        {
+            return NotFound();
+        }
+
+        var path = Path.GetFullPath(validatePathDto.Path);
+
         if (validatePathDto.IsFile.HasValue)
         {
             if (validatePathDto.IsFile.Value)
             {
-                if (!System.IO.File.Exists(validatePathDto.Path))
+                if (!System.IO.File.Exists(path))
                 {
                     return NotFound();
                 }
             }
             else
             {
-                if (!Directory.Exists(validatePathDto.Path))
+                if (!Directory.Exists(path))
                 {
                     return NotFound();
                 }
@@ -97,19 +104,14 @@ public class EnvironmentController : BaseJellyfinApiController
         }
         else
         {
-            if (!System.IO.File.Exists(validatePathDto.Path) && !Directory.Exists(validatePathDto.Path))
+            if (!System.IO.File.Exists(path) && !Directory.Exists(path))
             {
                 return NotFound();
             }
 
             if (validatePathDto.ValidateWritable)
             {
-                if (validatePathDto.Path is null)
-                {
-                    throw new ResourceNotFoundException(nameof(validatePathDto.Path));
-                }
-
-                var file = Path.Combine(validatePathDto.Path, Guid.NewGuid().ToString());
+                var file = Path.Combine(path, Guid.NewGuid().ToString());
                 try
                 {
                     System.IO.File.WriteAllText(file, string.Empty);
