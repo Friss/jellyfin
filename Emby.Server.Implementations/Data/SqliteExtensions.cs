@@ -69,13 +69,6 @@ namespace Emby.Server.Implementations.Data
             }
         }
 
-        public static void Execute(this SqliteConnection sqliteConnection, string commandText)
-        {
-            using var command = sqliteConnection.CreateCommand();
-            command.CommandText = commandText;
-            command.ExecuteNonQuery();
-        }
-
         public static string ToDateTimeParamValue(this DateTime dateValue)
         {
             var kind = DateTimeKind.Utc;
