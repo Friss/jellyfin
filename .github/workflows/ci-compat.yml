@@ -54,11 +54,13 @@ jobs:
       - name: Checkout common ancestor
         env:
           HEAD_REF: ${{ github.head_ref }}
+          BASE_REPO: ${{ github.event.pull_request.base.repo.full_name }}
+          BASE_REF: ${{ github.base_ref }}
         run: |
-          git remote add upstream https://github.com/${{ github.event.pull_request.base.repo.full_name }}
-          git -c protocol.version=2 fetch --prune --progress --no-recurse-submodules upstream +refs/heads/*:refs/remotes/upstream/* +refs/tags/*:refs/tags/*
-          ANCESTOR_REF=$(git merge-base upstream/${{ github.base_ref }} origin/$HEAD_REF)
-          git checkout --progress --force $ANCESTOR_REF
+          git remote add upstream "https://github.com/${BASE_REPO}"
+          git -c protocol.version=2 fetch --prune --progress --no-recurse-submodules upstream "+refs/heads/*:refs/remotes/upstream/*" "+refs/tags/*:refs/tags/*"
+          ANCESTOR_REF=$(git merge-base "upstream/$BASE_REF" "origin/$HEAD_REF")
+          git checkout --progress --force "$ANCESTOR_REF"
 
       - name: Build
         run: |
