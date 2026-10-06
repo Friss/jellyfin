@@ -69,7 +69,9 @@ internal class RemoveDuplicateExtras : IMigrationRoutine
 
             // Delete all duplicate extras
             _logger.LogInformation("Removing found duplicated extras for the following items: {DuplicateExtras}", bads);
-            connection.Execute("DELETE FROM TypedBaseItems WHERE rowid IN (SELECT t1.rowid FROM TypedBaseItems AS t1, TypedBaseItems AS t2 WHERE t1.Path=t2.Path AND t1.Type!=t2.Type AND t1.Type='MediaBrowser.Controller.Entities.Video')");
+            using var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM TypedBaseItems WHERE rowid IN (SELECT t1.rowid FROM TypedBaseItems AS t1, TypedBaseItems AS t2 WHERE t1.Path=t2.Path AND t1.Type!=t2.Type AND t1.Type='MediaBrowser.Controller.Entities.Video')";
+            command.ExecuteNonQuery();
             transaction.Commit();
         }
     }
