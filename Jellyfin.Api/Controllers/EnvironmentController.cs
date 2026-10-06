@@ -109,7 +109,8 @@ public class EnvironmentController : BaseJellyfinApiController
                     throw new ResourceNotFoundException(nameof(validatePathDto.Path));
                 }
 
-                var file = Path.Combine(validatePathDto.Path, Guid.NewGuid().ToString());
+                var fullPath = Path.GetFullPath(validatePathDto.Path);
+                var file = Path.Combine(fullPath, Guid.NewGuid().ToString());
                 try
                 {
                     System.IO.File.WriteAllText(file, string.Empty);
