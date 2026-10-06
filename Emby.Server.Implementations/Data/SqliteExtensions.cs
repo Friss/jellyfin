@@ -58,8 +58,7 @@ namespace Emby.Server.Implementations.Data
                 sqliteConnection.Open();
             }
 
-            using var command = sqliteConnection.CreateCommand();
-            command.CommandText = commandText;
+            using var command = sqliteConnection.PrepareStatement(commandText);
             using (var reader = command.ExecuteReader())
             {
                 while (reader.Read())
