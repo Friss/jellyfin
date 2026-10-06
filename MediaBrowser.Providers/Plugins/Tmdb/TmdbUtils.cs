@@ -29,11 +29,6 @@ namespace MediaBrowser.Providers.Plugins.Tmdb
         /// </summary>
         public const string ProviderName = "TheMovieDb";
 
-        /// <summary>
-        /// API key to use when performing an API call.
-        /// </summary>
-        public const string ApiKey = "4219e299c89411838049ab0dab19ebd5";
-
         private const int TitleExactScore = 8;
         private const int TitlePrefixScore = 4;
         private const int YearExactScore = 2;

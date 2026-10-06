@@ -39,9 +39,7 @@ namespace MediaBrowser.Providers.Plugins.Tmdb
         {
             _memoryCache = new MemoryCache(new MemoryCacheOptions { SizeLimit = CacheSizeLimit });
 
-            var apiKey = Plugin.Instance.Configuration.TmdbApiKey;
-            apiKey = string.IsNullOrEmpty(apiKey) ? TmdbUtils.ApiKey : apiKey;
-            _tmDbClient = new TMDbClient(apiKey);
+            _tmDbClient = new TMDbClient(Plugin.Instance.Configuration.TmdbApiKey);
 
             // Not really interested in NotFoundException
             _tmDbClient.ThrowApiExceptions = false;
