@@ -173,14 +173,18 @@ public class MusicGenresController : BaseJellyfinApiController
             return NotFound();
         }
 
-        if (!userId.IsNullOrEmpty())
-        {
-            var user = _userManager.GetUserById(userId.Value);
+        var user = userId.IsNullOrEmpty()
+            ? null
+            : _userManager.GetUserById(userId.Value);
 
-            return _dtoService.GetBaseItemDto(item, dtoOptions, user);
+        if (user is not null && !item.IsVisibleStandalone(user))
+        {
+            return NotFound();
         }
 
-        return _dtoService.GetBaseItemDto(item, dtoOptions);
+        return user is not null
+            ? _dtoService.GetBaseItemDto(item, dtoOptions, user)
+            : _dtoService.GetBaseItemDto(item, dtoOptions);
     }
 
     private T? GetItemFromSlugName<T>(ILibraryManager libraryManager, string name, DtoOptions dtoOptions, BaseItemKind baseItemKind)
