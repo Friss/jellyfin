@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Threading.Tasks;
 using Jellyfin.Api.Attributes;
+using Jellyfin.Api.Extensions;
 using Jellyfin.Api.Helpers;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Configuration;
@@ -107,7 +108,14 @@ public class HlsSegmentController : BaseJellyfinApiController
         [FromQuery, Required] string deviceId,
         [FromQuery, Required] string playSessionId)
     {
-        _transcodeManager.KillTranscodingJobs(deviceId, playSessionId, _ => true);
+        var authenticatedDeviceId = User.GetDeviceId();
+        if (string.IsNullOrEmpty(authenticatedDeviceId)
+            || !string.Equals(deviceId, authenticatedDeviceId, StringComparison.Ordinal))
+        {
+            return Forbid();
+        }
+
+        _transcodeManager.KillTranscodingJobs(authenticatedDeviceId, playSessionId, _ => true);
         return NoContent();
     }
 
@@ -124,6 +132,7 @@ public class HlsSegmentController : BaseJellyfinApiController
     // Can't require authentication just yet due to seeing some requests come from Chrome without full query string
     // [Authenticated]
     [HttpGet("Videos/{itemId}/hls/{playlistId}/{segmentId}.{segmentContainer}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesVideoFile]
