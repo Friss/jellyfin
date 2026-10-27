@@ -50,9 +50,8 @@ public class HlsSegmentController : BaseJellyfinApiController
     /// <param name="segmentId">The segment id.</param>
     /// <response code="200">Hls audio segment returned.</response>
     /// <returns>A <see cref="FileStreamResult"/> containing the audio stream.</returns>
-    // Can't require authentication just yet due to seeing some requests come from Chrome without full query string
-    // [Authenticated]
     [HttpGet("Audio/{itemId}/hls/{segmentId}/stream.mp3", Name = "GetHlsAudioSegmentLegacyMp3")]
+    [Authorize]
     [HttpGet("Audio/{itemId}/hls/{segmentId}/stream.aac", Name = "GetHlsAudioSegmentLegacyAac")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesAudioFile]
@@ -121,9 +120,8 @@ public class HlsSegmentController : BaseJellyfinApiController
     /// <response code="200">Hls video segment returned.</response>
     /// <response code="404">Hls segment not found.</response>
     /// <returns>A <see cref="FileStreamResult"/> containing the video segment.</returns>
-    // Can't require authentication just yet due to seeing some requests come from Chrome without full query string
-    // [Authenticated]
     [HttpGet("Videos/{itemId}/hls/{playlistId}/{segmentId}.{segmentContainer}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesVideoFile]
