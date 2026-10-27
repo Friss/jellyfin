@@ -162,9 +162,27 @@ public class PersonsController : BaseJellyfinApiController
             return NotFound();
         }
 
-        if (!userId.IsNullOrEmpty())
+        User? user = userId.IsNullOrEmpty()
+            ? null
+            : _userManager.GetUserById(userId.Value);
+
+        var accessFilter = BuildAccessFilter(user);
+        if (accessFilter is not null)
         {
-            var user = _userManager.GetUserById(userId.Value);
+            var visible = _libraryManager.GetPeopleItems(new InternalPeopleQuery
+            {
+                AccessFilter = accessFilter,
+                NameContains = name,
+                EnableTotalRecordCount = false,
+            });
+            if (!visible.Items.Any(p => p.Id == item.Id))
+            {
+                return NotFound();
+            }
+        }
+
+        if (user is not null)
+        {
             return _dtoService.GetBaseItemDto(item, dtoOptions, user);
         }
 
