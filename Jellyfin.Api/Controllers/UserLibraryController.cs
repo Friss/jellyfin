@@ -546,6 +546,15 @@ public class UserLibraryController : BaseJellyfinApiController
             return NotFound();
         }
 
+        if (parentId.HasValue && !parentId.Value.IsEmpty())
+        {
+            var parentItem = _libraryManager.GetItemById<BaseItem>(parentId.Value, user);
+            if (parentItem is null)
+            {
+                return NotFound();
+            }
+        }
+
         if (!isPlayed.HasValue)
         {
             if (user.HidePlayedInLatest)
